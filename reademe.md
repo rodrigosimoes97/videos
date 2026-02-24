@@ -1,1 +1,1 @@
-reademe
+Arquivo legado. Consulte README.md.
