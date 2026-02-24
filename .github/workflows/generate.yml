@@ -1,0 +1,64 @@
+name: Generate Aprende Aqui Video
+
+on:
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: "Tema do vídeo"
+        required: true
+        default: "fatos curiosos sobre o cérebro"
+      style:
+        description: "Estilo narrativo"
+        required: true
+        default: "curiosity"
+      length:
+        description: "Duração alvo em segundos"
+        required: true
+        default: "40"
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+
+      - name: Generate sample video
+        env:
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
+        run: |
+          python -m src.main generate \
+            --topic "${{ github.event.inputs.topic }}" \
+            --style "${{ github.event.inputs.style }}" \
+            --length "${{ github.event.inputs.length }}" \
+            --visual_intensity medium \
+            --cta_variation on \
+            --music off
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: aprende-aqui-video
+          path: |
+            output/**/final.mp4
+            output/**/metadata.json
+            output/**/generation_report.json

@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aprende-aqui-video-engine"
+version = "0.1.0"
+description = "Gerador automático de vídeos virais verticais para Shorts/Reels/TikTok"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+]
+
+[tool.setuptools.packages.find]
+include = ["src*"]
